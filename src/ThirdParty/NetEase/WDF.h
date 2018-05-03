@@ -9,8 +9,9 @@
 #include "Sprite2.h"
 
 // #include "Sprite.h"
-using namespace std;
 namespace NetEase {
+	
+
 	class WDF
 	{
 		struct Header
@@ -18,6 +19,7 @@ namespace NetEase {
 			uint32 flag; // �����ı�ǩ
 			uint32 number; // �����е��ļ�����
 			uint32 offset; // �����е��ļ��б�ƫ��λ��
+			Header():flag(0),number(0),offset(0) {};
 		};
 
 		struct Index
@@ -26,13 +28,13 @@ namespace NetEase {
 			uint32 offset; // �ļ���ƫ��
 			uint32 size; // �ļ��Ĵ�С
 			uint32 spaces; // �ļ��Ŀռ�
+			Index( ):hash(0),offset(0),size(0),spaces(0) { }
 		};
 
 	public:
 		WDF();
 		WDF(std::string path) :mFilePath(path) { Init(); }
 		void DataHandler(char *pData, uint32* pBmpStart, int pixelOffset, int pixelLen);
-		void Init();
 		// Sprite LoadSprite(int id);
 		WAS GetWAS(uint32 id);
 		std::shared_ptr<Sprite2> LoadSprite(uint32 id);
@@ -49,14 +51,17 @@ namespace NetEase {
 		~WDF();
 
 	public:
-		Header mHeader;
-		Index* mIndencies;
+		WDF::Header mHeader;
+		std::vector<Index> mIndencies;
 		map<uint32, uint32> mIdToPos;
-		fstream mFile;
-		uint16 palette16[256];
-		string mFilePath;
+		
+		uint16 m_Palette16[256];
+		String mFilePath;
 		uint32 m_Palette32[256];
-		string mFileName;
+		String mFileName;
+		
+		uint32 m_WASNumber; = mHeader.number;
+		uint32 m_WASOffset; = mHeader.offset;
 
 	};
 }

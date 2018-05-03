@@ -5,6 +5,69 @@
 #include "WAS.h"
 using namespace std;
 
+
+XYQImage::XYQImage(std::ifstream& file,uint32 size)
+:m_pData(nullptr),
+m_Size(size)
+{
+	m_pData = new uint8[size](0);
+	file.read(m_pData,size);
+}
+
+
+XYQImage::~XYQImage()
+{
+	if(m_pData!=nullptr)
+	{
+		delete[] m_pData;
+		m_pData=nullptr;
+	}
+}
+
+XYQImageManager::XYQImageManager()
+{
+	m_ImageSet.clear();
+}
+XYQImageManager::~XYQImageManager()
+{	
+	for(auto it : m_ImageSet)
+	{
+		if(it.second != nullptr)
+		{
+			delete it.second;
+		}
+	}
+	m_ImageSet.clear();
+}
+
+bool XYQImageManager::erase(String path)
+{
+	if(m_ImageSet.count(path))
+	{
+		auto* tmp = m_ImageSet[path];
+		m_ImageSet.erase(path);
+		delete tmp;
+		return true;
+	}
+	return false;
+}
+
+void XYQImageManager::put(String path,std::ifstream& file,uint32 size)
+{
+	m_ImageSet[path] = new XYQImage(file,size);
+}
+
+XYQImage* XYQImageManager::get(String path)
+{
+	if(m_ImageSet.count(path))
+	{
+		return m_ImageSet[path];
+	}
+	return nullptr;
+}
+
+
+
 Sprite2::Sprite2()
 :Error(false)
 {
@@ -49,7 +112,12 @@ void Sprite2::SaveImage(int index)
 	//{
 	//	ofile.write((char*)&data[(mHeight -1- i)*mWidth*4], mWidth * 4);
 	//}
-	ofile.write((char*)mFrames[gpos][cpos].src, mWidth*mHeight * 4);
+	auto* p =  XYQ_IMAGE_MANAGER_INSTANCE->get(mFrames[gpos*mFrameSize + cpos]);
+	if(p)
+	{
+		ofile.write((char*)p->data(),p->size());
+	}
+	
 	cout << "完成 " << outfilename << " 帧图片输出~" << endl;
 	ofile.close();
 }

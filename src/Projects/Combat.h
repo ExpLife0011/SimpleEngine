@@ -22,8 +22,8 @@ public:
 	};
 
 	void SetRandomSkillID(){ 
-		m_RandomID=RANDOM_INSTANCE->NextInt(0,m_Skills.size()-1);
-		// m_RandomID=21;
+		// m_RandomID=RANDOM_INSTANCE->NextInt(0,m_Skills.size()-1);
+		m_RandomID=21;
 	};
 
 protected:
